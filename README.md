@@ -8,6 +8,10 @@ Go tool that fills Buffer queues from drafts. It fetches all channels for a Buff
 go run . --maxQueueSize=9 --bufferOrgId=ORG_ID --bufferKey=BUFFER_API_KEY --shuffleDrafts
 ```
 
+### Binaries
+
+Download prebuilt binaries from the [releases page](https://github.com/beyto1974/buffer-queue-filler/releases).
+
 ### Flags
 
 - `--maxQueueSize`: Maximum queued posts per channel before stopping.
