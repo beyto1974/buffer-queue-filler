@@ -6,6 +6,9 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -43,8 +46,10 @@ jobs:
           BIN="buffer-queue-filler-${VERSION}-${GOOS}-amd64${{ matrix.ext }}"
           go build -o "dist/$BIN" .
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release
+        if: matrix.goos == 'linux'
+        uses: softprops/action-gh-release@v2
         with:
-          name: buffer-queue-filler-${{ github.ref_name }}-${{ matrix.goos }}-amd64
-          path: dist/*
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          files: dist/*
