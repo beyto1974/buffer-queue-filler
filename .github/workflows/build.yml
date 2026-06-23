@@ -1,0 +1,50 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            ext: ""
+          - os: windows-latest
+            goos: windows
+            ext: ".exe"
+          - os: macos-latest
+            goos: darwin
+            ext: ""
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build
+        shell: bash
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: amd64
+          VERSION: ${{ github.ref_name }}
+        run: |
+          mkdir -p dist
+          BIN="buffer-queue-filler-${VERSION}-${GOOS}-amd64${{ matrix.ext }}"
+          go build -o "dist/$BIN" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buffer-queue-filler-${{ github.ref_name }}-${{ matrix.goos }}-amd64
+          path: dist/*
